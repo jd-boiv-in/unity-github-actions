@@ -23,7 +23,7 @@ on:
 
 jobs:
   build:
-    uses: starburst997/unity-github-actions/.github/workflows/linux.yml@v1
+    uses: jd-boiv-in/unity-github-actions/.github/workflows/linux.yml@v1
     secrets: inherit
     with:
       runner: 'self-hosted' # 'ubuntu-latest'
