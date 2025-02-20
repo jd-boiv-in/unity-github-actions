@@ -27,8 +27,8 @@ jobs:
     secrets: inherit
     with:
       runner: 'windows-2022'
-      runner-extra: 'ubuntu-latest'
-      runner-sign: 'windows-2022'
+      runner-extra: 'self-hosted-linux' # 'ubuntu-latest'
+      runner-sign: 'self-hosted-windows' # 'windows-2022'
       il2cpp: '1'
       library: 'Library-Windows'
       artifact: 'build-windows'
