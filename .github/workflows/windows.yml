@@ -94,7 +94,7 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           lfs: true
 
-      - uses: actions/cache/restore@v4.2.0
+      - uses: actions/cache/restore@v4
         id: cache
         with:
           path: ${{ env.UNITY_PATH }}/Library
@@ -153,7 +153,7 @@ jobs:
             !**/*_DoNotShip
             !**/*_ButDontShipItWithYourGame
 
-      - uses: actions/cache/save@v4.2.0
+      - uses: actions/cache/save@v4
         if: always() && steps.cache.outputs.cache-hit != 'true'
         with:
           path: ${{ env.UNITY_PATH }}/Library
