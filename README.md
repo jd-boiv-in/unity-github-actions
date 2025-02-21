@@ -1,14 +1,16 @@
 # unity-github-actions
 
-Build and publish your [Unity](https://unity.com/) app using [Github Actions](https://github.com/features/actions) via [GameCI](https://game.ci/). Use [this repo](https://github.com/starburst997/unity-github-actions) as a template to get started.
+Build and publish your [Unity](https://unity.com/) app using [Github Actions](https://github.com/features/actions) via [GameCI](https://game.ci/).
 
-When you'll be done and setup, this project should be able to build your app for all the major platforms supported by Unity \**except consoles*\* (**Windows**, **macOS**, **Linux**, **iOS**, **Android**, **WebGL**) (**mono** or **IL2CPP** for desktops). You'll have an automatic workflow to publish your app to the **macOS / iOS App Store**, **Google Play Store** and hosting on **S3**. No need to own a Mac or maintain an external web server! A browser is all you need.
+The following text is a copy of my blog post: [**Build and publish your Unity Game using Github Actions**](https://jd.boiv.in/post/2025/02/11/unity-github-actions.html).
+
+When you'll be done and setup, this project should be able to build your app for all the major platforms supported by Unity \**except consoles*\* (**Windows**, **macOS**, **Linux**, **iOS**, **Android**, **WebGL**) (**mono** or **IL2CPP** for desktops). You'll have an automatic workflow to publish your app to the **macOS / iOS App Store**, **Google Play Store** and hosting on **S3**. No need to own a Mac or maintain an external web server!
 
 This is very much opinionated, feel free to use as a starter-pack and modify as needed.
 
 *(coming soon: Steam, itch.io, Windows Store and whatever is the flavor of the month for a Linux App Store)*
 
-*(final part of my series on code-signing / distributing apps, check [Part 3 on Android](https://github.com/starburst997/android-code-sign))*
+*(final part of my series on code-signing / distributing apps, check [Part 1 on Windows Code-Signing](https://github.com/starburst997/windows-code-sign))*
 
 <br/>
 
@@ -26,9 +28,17 @@ Basically, once all the secrets are added to the repository, the workflows are a
 
 <br/>
 
-## Secrets
+## Use this template
 
-I suggests that you also add all of those secrets to a Password Manager. Most of these can be re-used for your next projects, speeding up the process.
+Start by creating a new repository using [this template](https://github.com/starburst997/unity-github-actions), it includes a sample "Hello World" Unity project in the folder `Unity.Test` which you can replace with your own. But I suggest you first starts by running the various actions using this simple project first to eliminate any issues that might be specific to your project.
+
+<br/>
+
+## Secrets / Variables
+
+There's a bunch of secrets / variables we need to gather to have everything working, so buckle up. Skip any platforms / app stores you don't need. You need to set them in your repository settings in Github.
+
+I suggests that you also add all of those secrets to a Password Manager. They can be re-used for your next projects, speeding up the process.
 
 <br/>
 
@@ -174,7 +184,7 @@ Some miscellaneous secrets to personalize the workflows.
 
 ## Run the actions
 
-Now that we have all the needed secrets, we can call the workflow for each platforms individually to test each release. To do so, go to the **Actions** tab of your repository in Github, select a platform on the left panel and click **Run workflow**.
+Now that we have all the needed secrets and variables, we can call the workflow for each platforms individually to test each release. To do so, go to the **Actions** tab of your repository in Github, select a platform on the left panel and click **Run workflow**.
 
 iOS / macOS requires that you run the **Apple Setup** workflow once to link it to the [match](https://docs.fastlane.tools/actions/match/) repository.
 
@@ -209,10 +219,10 @@ Create a yml file for docker (follow [this guide](https://docs.docker.com/get-st
 #### docker-compose.yml
 ```yml
 version: '3.9'
-
+name: cache-fix
 services:
   cache-server:
-    image: ghcr.io/falcondev-oss/github-actions-cache-server:latest
+    image: ghcr.io/falcondev-oss/github-actions-cache-server:4
     ports:
       - '3000:3000'
     environment:
@@ -240,6 +250,7 @@ Now we need to patch the DLLs of our Github Runner to use our `ACTIONS_CACHE_URL
 ```sh
 cp -n ~/actions-runner/bin/Runner.Worker.dll ~/Runner.Worker.backup.dll
 sed -i 's/\x41\x00\x43\x00\x54\x00\x49\x00\x4F\x00\x4E\x00\x53\x00\x5F\x00\x43\x00\x41\x00\x43\x00\x48\x00\x45\x00\x5F\x00\x55\x00\x52\x00\x4C\x00/\x41\x00\x43\x00\x54\x00\x49\x00\x4F\x00\x4E\x00\x53\x00\x5F\x00\x43\x00\x41\x00\x43\x00\x48\x00\x45\x00\x5F\x00\x4F\x00\x52\x00\x4C\x00/g' ~/actions-runner/bin/Runner.Worker.dll
+sed -i 's/\x41\x00\x43\x00\x54\x00\x49\x00\x4F\x00\x4E\x00\x53\x00\x5F\x00\x43\x00\x41\x00\x43\x00\x48\x00\x45\x00\x5F\x00\x53\x00\x45\x00\x52\x00\x56\x00\x49\x00\x43\x00\x45\x00\x5F\x00\x56\x00\x32\x00/\x41\x00\x43\x00\x54\x00\x49\x00\x4F\x00\x4E\x00\x53\x00\x5F\x00\x43\x00\x41\x00\x43\x00\x48\x00\x45\x00\x5F\x00\x53\x00\x45\x00\x52\x00\x56\x00\x49\x00\x43\x00\x45\x00\x5F\x00\x56\x00\x31\x00/g' ~/actions-runner/bin/Runner.Worker.dll
 ```
 
 Don't worry, it simply replace the string `ACTIONS_CACHE_URL` inside the DLL so our variable doesn't get overwritten.
@@ -278,7 +289,15 @@ For Google Play / Apple App Store, I manually select the build I vetted from the
 
 ## End results
 
-SCREENSHOTS
+<table align="center"><tr><td>
+<a href="https://jd.boiv.in/assets/posts/2025-02-11-unity-github-actions/results-01.png" target="_blank"><img src="https://jd.boiv.in/assets/posts/2025-02-11-unity-github-actions/small/results-01.png" alt="Build binary using Github Action" title="Build binary using Github Action"/></a><p align="center">1</p>
+</td><td>
+<a href="https://jd.boiv.in/assets/posts/2025-02-11-unity-github-actions/results-02.png" target="_blank"><img src="https://jd.boiv.in/assets/posts/2025-02-11-unity-github-actions/small/results-02.png" alt="Discord Notifications" title="Discord Notifications"/></a><p align="center">2</p>
+</td><td>
+<a href="https://jd.boiv.in/assets/posts/2025-02-11-unity-github-actions/results-03.png" target="_blank"><img src="https://jd.boiv.in/assets/posts/2025-02-11-unity-github-actions/small/results-03.png" alt="Github release" title="Github release" /></a><p align="center">3</p>
+</td><td>
+<a href="https://jd.boiv.in/assets/posts/2025-02-11-unity-github-actions/results-04.png" target="_blank"><img src="https://jd.boiv.in/assets/posts/2025-02-11-unity-github-actions/small/results-04.png" alt="Automatic publishing to Apple App Store" title="Automatic publishing to Apple App Store" /></a><p align="center">4</p>
+</td></tr></table>
 
 1. Build the platform of your choice with Github Actions.
 
@@ -296,6 +315,14 @@ It took a bit more time than I expected but at least I have a workflow for build
 
 I don't need to worry about certificates or read the same stack overflow answer years after years on how to generate some keys, I can simply set it up one time and be done (with automatic renewal).
 
-The "building the unity app" step is pretty self-contained and could be adapted for any frameworks / engines, maybe Godot could be next...
+The "building the unity app" step is pretty self-contained and could be adapted for any frameworks / engines, maybe [Godot](https://godotengine.org/) could be next...
+
+<br/>
+
+Code-signing / distributing app series:
+- Part 1: [Code Signing for Windows as an Individual Developer](https://github.com/starburst997/windows-code-sign)
+- Part 2: [Code Signing for Apple without a mac](https://github.com/starburst997/apple-code-sign)
+- Part 3: [Code Signing for Android via Github Actions](https://github.com/starburst997/android-code-sign)
+- Part 4: [Build and publish your Unity Game using Github Actions](https://github.com/starburst997/windows-code-sign)
 
 <br/>
