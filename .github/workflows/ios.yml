@@ -28,7 +28,7 @@ jobs:
     with:
       runner: 'self-hosted-linux' # 'ubuntu-latest'
       runner-extra: 'self-hosted-linux' # 'ubuntu-latest'
-      runner-sign: 'macos-13'
+      runner-sign: 'macos-latest'
       il2cpp: '1'
       library: 'Library-iOS'
       artifact: 'build-ios'
