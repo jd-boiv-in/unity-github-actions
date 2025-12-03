@@ -139,6 +139,7 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           GH_PAT: ${{ secrets.GH_PAT }}
+          USYM_UPLOAD_AUTH_TOKEN: ${{ secrets.USYM_UPLOAD_AUTH_TOKEN }}
         with:
           runAsHostUser: true
           allowDirtyBuild: true
@@ -255,9 +256,23 @@ jobs:
           path: build
           overwrite: true
 
-      - name: Print build log on failure
+      - name: Print diagnostics on failure
         if: failure()
-        run: cat ~/Library/Logs/gym/*.log 2>/dev/null || echo "No gym logs found"
+        run: |
+          echo "=== Disk Space ==="
+          df -h
+
+          echo ""
+          echo "=== Gym Build Logs ==="
+          cat ~/Library/Logs/gym/*.log 2>/dev/null || echo "No gym logs found"
+
+          echo ""
+          echo "=== Xcode Version ==="
+          xcodebuild -version
+
+          echo ""
+          echo "=== Available Xcodes ==="
+          ls -la /Applications/ | grep Xcode
 
   post-build:
     name: Post Build
