@@ -143,6 +143,7 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           GH_PAT: ${{ secrets.GH_PAT }}
+          USYM_UPLOAD_AUTH_TOKEN: ${{ secrets.USYM_UPLOAD_AUTH_TOKEN || 'dummy' }}
         with:
           runAsHostUser: true
           allowDirtyBuild: true
