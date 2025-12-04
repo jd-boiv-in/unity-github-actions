@@ -211,8 +211,14 @@ jobs:
 
       - name: Fix script permissions
         run: |
-          find $IOS_BUILD_PATH -type f -name "**.sh" -exec chmod +x {} \;
-          find $IOS_BUILD_PATH -type f -iname "usymtool" -exec chmod +x {} \;
+          echo "=== Looking for scripts ==="
+          find project -type f -name "*.sh" -ls
+          find project -type f -name "usymtool" -ls
+          echo "=== Setting permissions ==="
+          find project -type f -name "*.sh" -exec chmod +x {} \;
+          find project -type f -name "usymtool" -exec chmod +x {} \;
+          echo "=== Verifying ==="
+          find project -type f -name "*.sh" -ls
       
       - name: Run fastlane
         env:
