@@ -208,6 +208,11 @@ jobs:
         with:
           name: ${{ inputs.artifact }}
           path: project
+
+      - name: Fix script permissions
+        run: |
+          find $IOS_BUILD_PATH -type f -name "**.sh" -exec chmod +x {} \;
+          find $IOS_BUILD_PATH -type f -iname "usymtool" -exec chmod +x {} \;
       
       - name: Run fastlane
         env:
